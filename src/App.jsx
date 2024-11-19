@@ -1,35 +1,65 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect, useState } from "react";
+import "./App.css";
+import fetchData from "./fetchData";
+import { useDebounce } from "./useDebounce";
+import SearchBar from "./SearchBar";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [query, setQuery] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [apiData, setApiData] = useState([]);
+  const debouncedSearch = useDebounce(query);
+  const [voidApi, setVoidApi] = useState(false);
+
+  useEffect(() => {
+    if (!debouncedSearch) {
+      setApiData([]);
+      setVoidApi(false);
+      return;
+    }
+
+    const loadApiData = async () => {
+      setLoading(true);
+      const apiData = await fetchData(debouncedSearch);
+      if (apiData.results.length !== 0) {
+        setApiData(apiData.results);
+        setVoidApi(false);
+      } else {
+        setVoidApi(true);
+      }
+      console.log(apiData);
+      setLoading(false);
+    };
+    loadApiData();
+  }, [debouncedSearch]);
 
   return (
     <>
       <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+        <h1>Buscar informacion de musica</h1>
+        <SearchBar onChange={setQuery} />
+        <div className="music-card-container">
+          {query === "" && <h1>Escribe algo para comenzar</h1>}
+          {loading ? (
+            <h2>Cargando...</h2>
+          ) : voidApi ? (
+            <h1>No se encontraron resultados</h1>
+          ) : (
+            apiData.map((result) => {
+              if (result.thumb !== "")
+                return (
+                  <div key={result.id} className="info-music-card">
+                    <img src={result.thumb} alt="Portada" />
+                    <h2>{result.title}</h2>
+                    <a>{result.type.toUpperCase()}</a>
+                  </div>
+                );
+            })
+          )}
+        </div>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
