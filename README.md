@@ -1,8 +1,13 @@
-# React + Vite
+# DEBOUNCE-API
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+instructions:
 
-Currently, two official plugins are available:
+install depencies
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+npm instal / npm i
+
+run project
+
+npm run dev
+
+this project uses discogs API for music information consuming, type in the search bar any topic you want
